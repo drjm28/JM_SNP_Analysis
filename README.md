@@ -1,2 +1,2 @@
 # JM_SNP_Analysis
-genetic analysis of SNPs
+Wrangling SNP data from CleanPlex sequencing
