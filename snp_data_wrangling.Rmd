@@ -48,3 +48,86 @@ A single combined Excel file structured as:
 ## Goal
 
 Develop R code in this document to automate the SNP data wrangling process, ensuring adaptability and ease of use.
+
+## R Code Implementation
+
+```{r setup, message=FALSE}
+library(tidyverse)    # data wrangling
+library(readxl)       # read Excel files
+library(openxlsx)     # write Excel files
+```
+
+```{r}
+# List all Excel files in 'data/' directory
+file_paths <- list.files(path = "data/", pattern = "\\.xlsx$", full.names = TRUE)
+
+# Extract subject IDs from file names
+subject_ids <- basename(file_paths) %>% 
+  str_remove("\\.xlsx$")
+```
+
+
+```{r}
+clean_snp_file <- function(file_path, subject_id) {
+  
+  # Read Excel file
+  df <- read_excel(file_path)
+  
+  # Ensure consistent column names
+  colnames(df) <- c("SNP", "Reference_Allele", "Detected_Allele", "Percentage")
+  
+  # Group by SNP to handle heterozygous (2 rows) and homozygous (1 row)
+  df_clean <- df %>%
+    group_by(SNP) %>%
+    summarise(
+      genotype = case_when(
+        n() == 1 & Percentage >= 98 ~ paste0(Detected_Allele, "_", Detected_Allele),   # Homozygous
+        n() == 2 & all(abs(Percentage - 50) <= 5) ~ paste(sort(Detected_Allele), collapse = "_"), # Heterozygous
+        TRUE ~ NA_character_  # Handle unexpected cases
+      )
+    ) %>%
+    filter(!is.na(genotype)) %>%
+    mutate(Subject = subject_id)
+  
+  return(df_clean)
+}
+
+
+```
+
+
+```{r}
+# Process and combine all subjects' data
+all_subjects_data <- map2_df(file_paths, subject_ids, clean_snp_file)
+
+
+```
+
+
+```{r}
+final_wide_data <- all_subjects_data %>%
+  pivot_wider(
+    names_from = SNP,
+    values_from = genotype
+  ) %>%
+  arrange(Subject)
+
+```
+
+
+```{r}
+write.xlsx(final_wide_data, file = "Final_Combined_SNP_Data.xlsx")
+```
+
+
+---
+
+## 📌 **Next Steps:**
+
+- Add the `data/` folder to your project.
+- Place all subject Excel files (like `Example_Paragon_Table_Subject_32.xlsx`) into this `data/` folder.
+- Run each code chunk one-by-one from top to bottom to ensure everything works smoothly.
+
+
+
+
