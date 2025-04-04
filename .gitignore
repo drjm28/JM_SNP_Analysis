@@ -1,0 +1,28 @@
+# RStudio project files
+.Rproj.user/
+*.Rproj
+.Rhistory
+.RData
+.Ruserdata
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Output files
+*.html
+*.pdf
+*.docx
+*.log
+*.aux
+*.out
+
+# Temporary or large data
+*.tmp
+*.csv
+*.xlsx
+*.tsv
+
+# Ignore everything in a data/ folder, except .R scripts
+data/*
+!data/*.R
