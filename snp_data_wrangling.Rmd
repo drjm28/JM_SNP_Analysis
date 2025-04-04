@@ -1,0 +1,50 @@
+---
+title: "SNP_Data_Wrangling"
+author: "Drjm28"
+date: "2025-04-04"
+output: html_document
+---
+## Overview
+
+The goal is to write R code in this R Markdown file that imports and processes genomic SNP data from multiple Excel files, each file representing one subject. There are currently 32 subjects, but the code should be adaptable for varying numbers of subjects. This code should be user-friendly, especially for users who may not have extensive R experience.
+
+## Data Description
+
+Each Excel file contains SNP genotype data from a Paragon Genomics CleanPlex custom assay targeting approximately 50 amplicons and their associated SNPs. The total number of SNPs detected per subject can range from 20 to 60 due to incidental variant calls within the sequenced regions (~150 base pairs per amplicon).
+
+### Excel Input File Structure
+
+- **Rows** represent individual SNPs.
+- **Columns** include:
+  - SNP descriptor (name/location)
+  - Reference allele
+  - Detected allele (actual call)
+  - Percentage (read frequency of detected allele)
+
+### Genotype Convention
+
+- **Homozygous genotype**: Single row, allele frequency ≈ 100%.  
+  - *Format example:* `A_A`
+  
+- **Heterozygous genotype**: Two separate rows per SNP, each allele frequency ≈ 50% ± 2%.  
+  - *Format example:* `A_G`
+
+## Desired Final Output
+
+A single combined Excel file structured as:
+
+- **Rows:** Subjects (currently 32 rows)
+- **Columns:** Each unique SNP detected across all subjects
+- **Cells:** Genotype per subject per SNP intersection (`A_A` or `A_G`)
+
+## Example Files Provided
+
+- Example Excel file: **`Example_Paragon_Table_Subject_32.xlsx`**  
+  *(shows input data format per subject)*
+
+- Desired final output file: **`Example_Final_Output.xlsx`**  
+  *(illustrates target output format clearly defining rows, columns, and genotype formats)*
+
+## Goal
+
+Develop R code in this document to automate the SNP data wrangling process, ensuring adaptability and ease of use.
